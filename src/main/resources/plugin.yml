@@ -1,0 +1,13 @@
+name: AstolfoBridges
+version: ${project.version}
+main: tech.astolfo.astolfobridges.AstolfoBridges
+api-version: 1.15.2
+prefix: Astolfo
+authors: [AstolfoDev]
+description: A bridge duels plugin for the Electra server
+website: https://astolfo.tech
+commands:
+  start:
+    usage: /<command>
+  end:
+    usage: /<command>
