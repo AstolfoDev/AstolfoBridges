@@ -1,7 +1,7 @@
 package tech.astolfo.astolfobridges.commands;
 
 import com.mongodb.ConnectionString;
-import com.mongodb.Mongo;
+
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -18,12 +18,20 @@ import tech.astolfo.astolfobridges.Methods.chunks;
 import tech.astolfo.astolfobridges.Methods.inventory;
 import tech.astolfo.astolfobridges.Methods.scoreboard;
 
+
 public class Start implements CommandExecutor {
 
-    private String player2 = "yankewithoutbrim";
+    public static Player playerOne;
+    public static Player playerTwo;
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        Object[] plyrs = Bukkit.getOnlinePlayers().toArray();
+        playerOne = (Player) plyrs[0];
+        playerTwo = (Player) plyrs[1];
+
+
+
         Player p = (Player) sender;
         new chunks().clearWool(p);
 
@@ -37,8 +45,8 @@ public class Start implements CommandExecutor {
         MongoClient mongoClient = MongoClients.create(settings);
         MongoDatabase database = mongoClient.getDatabase("Minigames");
         MongoCollection<Document> collection = database.getCollection("Portals");
-        Document doc = new Document("player1", p.getUniqueId().toString())
-                .append("player2", Bukkit.getPlayer(player2).getUniqueId().toString())
+        Document doc = new Document("player1", playerOne.getUniqueId().toString())
+                .append("player2", playerTwo.getUniqueId().toString())
                 .append("score1", 0)
                 .append("score2", 0);
         collection.insertOne(doc);
@@ -50,19 +58,14 @@ public class Start implements CommandExecutor {
         Location spawn1 = new Location(p.getWorld(), 57.5, 69, -9.5);
         Location spawn2 = new Location(p.getWorld(), 57.5, 69, 9.5);
 
-        if (Bukkit.getPlayer("LieutenantLolli") != null) {
-            Player plyr = Bukkit.getPlayer("LieutenantLolli");
-            plyr.setGameMode(GameMode.SURVIVAL);
-            plyr.teleport(spawn1);
-        }
-        if (Bukkit.getPlayer(player2) != null) {
-            Player plyr2 = Bukkit.getPlayer(player2);
-            plyr2.setGameMode(GameMode.SURVIVAL);
-            plyr2.teleport(spawn2);
-        }
+        playerOne.setGameMode(GameMode.SURVIVAL);
+        playerOne.teleport(spawn1);
+
+        playerTwo.setGameMode(GameMode.SURVIVAL);
+        playerTwo.teleport(spawn2);
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
-            pl.setScoreboard(new scoreboard().gameBoard(doc));
+            pl.setScoreboard(new scoreboard().gameBoard(doc, pl));
             pl.setAllowFlight(true);
 
             pl.getInventory().clear();
@@ -104,16 +107,11 @@ public class Start implements CommandExecutor {
             pl.playSound(pl.getLocation(), Sound.ORB_PICKUP, 10.0F, 1.0F);
         }
 
-        if (Bukkit.getPlayer("LieutenantLolli") != null) {
-            Player p1 = Bukkit.getPlayer("LieutenantLolli");
-            new inventory().magenta(p1);
-            p1.teleport(loc);
-        }
-        if (Bukkit.getPlayer(player2) != null) {
-            Player p2 = Bukkit.getPlayer(player2);
-            new inventory().orange(p2);
-            p2.teleport(loc2);
-        }
+        new inventory().magenta(playerOne);
+        playerOne.teleport(loc);
+
+        new inventory().orange(playerTwo);
+        playerTwo.teleport(loc2);
         return true;
     }
 }

@@ -6,9 +6,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+import tech.astolfo.astolfobridges.commands.Start;
 
 public class teleport {
-    private String player2 = "yankewithoutbrim";
+
+    private Player playerOne = new Start().playerOne;
+    private Player playerTwo = new Start().playerTwo;
 
     public void teleportBack(Player p) {
         Location location = new Location(p.getWorld(), 0.5, 77, -25.5);
@@ -16,10 +19,10 @@ public class teleport {
         String name = p.getName();
         new inventory().clearArmour(p);
         p.getInventory().clear();
-        if (Bukkit.getPlayer("LieutenantLolli") == p) {
+        if (Bukkit.getPlayer(playerOne.getName()) == p) {
             new inventory().magenta(p);
         }
-        if (Bukkit.getPlayer(player2) == p) {
+        if (Bukkit.getPlayer(playerTwo.getName()) == p) {
             new inventory().orange(p);
         }
         p.setHealth(20);
@@ -29,9 +32,8 @@ public class teleport {
         }
         p.playSound(p.getLocation(), Sound.ORB_PICKUP, 10.0F, 1.0F);
         p.setVelocity(new Vector(0, 0, 0));
-        if(name.equals(player2)) {
+        if(name.equals(playerTwo.getName())) {
             p.teleport(location2);
-            p.getLocation().setYaw(-180);
         } else {
             p.teleport(location);
         }
